@@ -6,22 +6,22 @@ module.exports.main = (event, context, callback) => {
     const body = JSON.parse(event.body)
     const dynamoDb = new AWS.DynamoDB.DocumentClient()
 
-    const data = body.data
-    data.updatedAt = new Date().getTime();
+    let data = body.data
+    data.updatedAt = new Date().getTime()
 
     const params = {
         TableName: body.tableName || 'am-default',
         Item: data
     };
 
-    dynamoDb.put(params, (error, data) => {
+    dynamoDb.put(params, (error, result) => {
         if (error) {
             callback(error)
             return
         }
         callback(null, {
             statusCode: 200,
-            body: JSON.stringify(result),
+            body: JSON.stringify(data),
             headers: {
                 "Content-Type": "application/json; charset=UTF-8",
                 "Access-Control-Allow-Origin": "*"
